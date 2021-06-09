@@ -1,0 +1,63 @@
+﻿@model List<IndexUser> 
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<script>
+    function SelectAll() {
+        Array.from(document.querySelectorAll("input[type='checkbox']"))
+            .filter(v => v.id != 'maincheckbox')
+            .forEach(v => v.checked = document.getElementById('maincheckbox').checked);
+    }
+    function ClickCheckBox() {
+        document.getElementById('maincheckbox').checked =
+            Array.from(document.querySelectorAll("input[type='checkbox']"))
+                .filter(v => v.id != 'maincheckbox')
+                .every(v => v.checked);
+    }
+</script>
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+
+    <div class="py-3 d-flex justify-content-around">
+        <form id="mainform" method="post">
+            <button asp-controller="Validation" asp-action="Block" type="submit" class="btn btn-primary">Block</button>
+            <button asp-controller="Validation" asp-action="Unblock" type="submit" class="btn btn-primary">Unblock</button>
+            <button asp-controller="Validation" asp-action="Delete" type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col" class="d-flex justify-content-around align-items-center">
+                    <input type="checkbox" id="maincheckbox" onclick="SelectAll()">
+                    Select all
+                </th>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Registration date</th>
+                <th scope="col">Last login date</th>
+                <th scope="col">Blocked</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count(); i++)
+            {
+                var user = Model[i];
+                <tr>
+                    <td><input type="checkbox" form="mainform" name="[@i].IsChecked" onclick="ClickCheckBox()"></td>
+                    <td>@user.Id</td>
+                    <td>@user.Name</td>
+                    <td>@user.Email</td>
+                    <td>@String.Format("{0:G}", user.RegistrationDate)</td>
+                    <td>@String.Format("{0:G}", user.LastLoginDate)</td>
+                    <td>@user.IsBlocked</td>
+                    <td><input type="text" value="@user.Id" form="mainform" name="[@i].Id" hidden></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
